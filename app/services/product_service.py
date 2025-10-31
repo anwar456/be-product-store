@@ -3,10 +3,15 @@ from fastapi import HTTPException
 from app.utils.convert_objectid_util import convert_objectid
 import app.db.database as database 
 import time
+from datetime import datetime
 
-async def add_product(product_data):
+async def add_product(product_data: dict):
     if database.db is None:
-        raise Exception("Database is not connected")
+        raise HTTPException(status_code=500, detail="Database is not connected")
+
+    now = datetime.utcnow()
+    product_data["createdAt"] = now
+    product_data["updatedAt"] = now
 
     result = await database.db["products"].insert_one(product_data)
 
@@ -81,6 +86,8 @@ async def update_product(product_data):
 
     update_fields = {k: v for k, v in product_data.items() if k != "id"}
 
+    update_fields["updatedAt"] = datetime.utcnow()
+    
     result = await collection.update_one(
         {"_id": ObjectId(product_id)},
         {"$set": update_fields}

@@ -1,10 +1,13 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Any
+from datetime import datetime
+
 
 class ImageCloud(BaseModel):
     url: Optional[str] = None
     public_id: Optional[str] = None
     fileName: Optional[str] = None
+
 
 class ProductCreate(BaseModel):
     category: str
@@ -12,7 +15,7 @@ class ProductCreate(BaseModel):
     images: List[ImageCloud] = Field(default_factory=list)
     name: str = Field(..., min_length=1)
     price: float = Field(..., ge=0)
-    status: bool = True
+    status: str
     stock: int = Field(..., ge=0)
     unit: str
 
@@ -24,12 +27,13 @@ class ProductCreate(BaseModel):
                 "images": [],
                 "name": "string",
                 "price": 0,
-                "status": True,
+                "status": "string",
                 "stock": 0,
-                "unit": "string"
+                "unit": "string",
             }
         }
     )
+
 
 class ProductUpdate(BaseModel):
     id: str = Field(..., description="Product ID to update")
@@ -39,7 +43,7 @@ class ProductUpdate(BaseModel):
     price: Optional[float] = None
     stock: Optional[int] = None
     unit: Optional[str] = None
-    status: Optional[bool] = True
+    status: Optional[str] = None
     images: Optional[List[ImageCloud]] = Field(default_factory=list)
 
     model_config = ConfigDict(
@@ -52,15 +56,17 @@ class ProductUpdate(BaseModel):
                 "price": 0,
                 "stock": 0,
                 "unit": "string",
-                "status": True,
-                "images": []
+                "status": "string",
+                "images": [],
             }
         }
     )
 
+
 class FilterItem(BaseModel):
     field: str
     value: Any
+
 
 class ProductList(BaseModel):
     search: Optional[str] = ""

@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from app.utils.convert_objectid_util import convert_objectid
 import bcrypt
 import time
+from datetime import datetime
 
 async def register_user_service(user_data: dict):
     if database.db is None:
@@ -29,6 +30,10 @@ async def register_user_service(user_data: dict):
         user_data["permissionId"] = ObjectId(permission_id)
     except errors.InvalidId:
         raise HTTPException(status_code=400, detail="Invalid permissionId")
+
+    now = datetime.utcnow()
+    user_data["createdAt"] = now
+    user_data["updatedAt"] = now
 
     result = await users.insert_one(user_data)
 
@@ -114,6 +119,8 @@ async def update_user(user_data):
         except:
             raise HTTPException(status_code=400, detail="Invalid permission ID format")
 
+    update_fields["updatedAt"] = datetime.utcnow()
+    
     result = await collection.update_one(
         {"_id": ObjectId(user_id)},
         {"$set": update_fields}
