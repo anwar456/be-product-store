@@ -13,8 +13,8 @@ Backend service untuk sistem Product Store — dibangun menggunakan **Python** d
 
 ### 3. Aktifkan Virtual Environment
 `python -m venv .venv`
-`source .venv/bin/activate  # (Linux/macOS)`
-`.venv\Scripts\activate     # (Windows)`
+`source .venv/bin/activate # (Linux/macOS)`
+`.venv\Scripts\activate # (Windows)`
 
 ### 4. Install Dependencies
 `pip install -r requirements.txt`
