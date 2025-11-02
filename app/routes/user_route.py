@@ -4,9 +4,10 @@ from app.controllers.user_controller import (
     get_all_users_controller, 
     delete_user_controller, 
     get_user_by_id_controller, 
-    update_user_controller
+    update_user_controller,
+    reset_user_password_controller
 )
-from app.models.user_model import UserRegister, UserList, UserUpdate
+from app.models.user_model import UserRegister, UserList, UserUpdate, UserResetPassword
 from app.core.dependencies import get_current_user 
 
 router = APIRouter(prefix="/user", tags=["User"])
@@ -30,4 +31,8 @@ async def get_all(body: UserList, current_user=Depends(get_current_user)):
 @router.get("/get-one")
 async def get_by_id(id: str, current_user=Depends(get_current_user)):
     return await get_user_by_id_controller(id)
+
+@router.post("/reset-password")
+async def reset_password(body: UserResetPassword, current_user=Depends(get_current_user)):
+    return await reset_user_password_controller(body)
 

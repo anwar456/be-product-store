@@ -1,6 +1,7 @@
 from app.models.user_model import UserRegister, UserList, UserUpdate
-from app.services.user_service import register_user_service, get_users, get_user_by_id, delete_user, update_user
+from app.services.user_service import register_user_service, get_users, get_user_by_id, delete_user, update_user, reset_user_password
 from fastapi import HTTPException
+
 async def register_user_controller(user: UserRegister):
     user_data = user.dict()
     try:
@@ -41,3 +42,9 @@ async def delete_user_controller(id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+async def reset_user_password_controller(body):
+    return await reset_user_password(
+        user_id=body.user_id,
+        new_password=body.new_password
+    )

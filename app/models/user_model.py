@@ -10,7 +10,7 @@ class UserRegister(BaseModel):
     password: str
     status: str
     permissionId: str
-    privileges: List[str] = []
+    privileges: List[dict] = []
     image: Optional[str] = ""
 
     model_config = ConfigDict(
@@ -35,7 +35,7 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     status: Optional[str] = None
     permissionId: Optional[str] = None
-    privileges: Optional[List[str]] = []
+    privileges: Optional[List[dict]] = []
     image: Optional[str] = ""
 
     model_config = ConfigDict(
@@ -52,6 +52,11 @@ class UserUpdate(BaseModel):
             }
         }
     )
+
+
+class UserResetPassword(BaseModel):
+    user_id: str = Field(..., description="ID user yang akan direset password-nya")
+    new_password: str = Field(..., min_length=6, description="Password baru")
 
 
 class FilterItem(BaseModel):

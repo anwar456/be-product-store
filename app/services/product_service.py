@@ -42,15 +42,16 @@ async def get_products(query_params):
 
     skip = (query_params.page - 1) * query_params.size
     limit = query_params.size
-    sort_order = -1 if query_params.order == "desc" else 1
+    sort_order = -1 if query_params.order.lower() == "desc" else 1
 
-    cursor = collection.find(mongo_query)\
-        .sort(query_params.orderBy, sort_order)\
-        .skip(skip)\
-        .limit(limit)
+    cursor = collection.find(mongo_query)
+
+    if getattr(query_params, "orderBy", None):
+        cursor = cursor.sort(query_params.orderBy, sort_order)
+
+    cursor = cursor.skip(skip).limit(limit)
 
     results = await cursor.to_list(length=query_params.size)
-
     results = convert_objectid(results)
 
     total = await collection.count_documents(mongo_query)
@@ -72,6 +73,7 @@ async def get_products(query_params):
         },
         "data": results
     }
+
     
 async def update_product(product_data):
     if database.db is None:

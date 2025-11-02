@@ -5,6 +5,8 @@ from app.utils.convert_objectid_util import convert_objectid
 import bcrypt
 import time
 from datetime import datetime
+from app.utils.hash_util import hash_password
+
 
 async def register_user_service(user_data: dict):
     if database.db is None:
@@ -42,54 +44,50 @@ async def register_user_service(user_data: dict):
         "message": "User registered successfully",
         "id": str(result.inserted_id)
     }
-
+    
 async def get_users(query_params):
     if database.db is None:
-        raise HTTPException(status_code=500, detail="Database is not connected")
+        raise Exception("Database is not connected")
 
     start_time = time.time()
     collection = database.db["users"]
 
     mongo_query = {}
 
-    if getattr(query_params, "search", None) and getattr(query_params, "searchBy", None):
+    if query_params.search and query_params.searchBy:
         mongo_query["$or"] = [
             {field: {"$regex": query_params.search, "$options": "i"}}
             for field in query_params.searchBy
         ]
 
-    for f in getattr(query_params, "filters", []):
+    for f in query_params.filters:
         mongo_query[f.field] = f.value
 
-    page = getattr(query_params, "page", 1)
-    size = getattr(query_params, "size", 10)
-    skip = (page - 1) * size
-    limit = size
+    skip = (query_params.page - 1) * query_params.size
+    limit = query_params.size
+    sort_order = -1 if query_params.order.lower() == "desc" else 1
 
-    order_by = getattr(query_params, "orderBy", "_id")
-    sort_order = -1 if getattr(query_params, "order", "desc") == "desc" else 1
+    cursor = collection.find(mongo_query)
 
-    cursor = collection.find(mongo_query)\
-        .sort(order_by, sort_order)\
-        .skip(skip)\
-        .limit(limit)
+    if getattr(query_params, "orderBy", None):
+        cursor = cursor.sort(query_params.orderBy, sort_order)
 
-    results = await cursor.to_list(length=size)
+    cursor = cursor.skip(skip).limit(limit)
 
+    results = await cursor.to_list(length=query_params.size)
     results = convert_objectid(results)
 
     total = await collection.count_documents(mongo_query)
-    total_pages = (total + size - 1) // size
+    total_pages = (total + query_params.size - 1) // query_params.size
 
     execution_time = round((time.time() - start_time) * 1000, 2)
 
     return {
         "metaData": {
             "pagination": {
-                "size": size,
+                "size": query_params.size,
                 "totalElements": total,
                 "totalPages": total_pages,
-                "page": page
             },
             "status": "success",
             "responseCode": 200,
@@ -176,5 +174,33 @@ async def delete_user(user_id: str):
     return {
         "status": "success",
         "message": "User deleted successfully",
+        "id": user_id
+    }
+    
+async def reset_user_password(user_id: str, new_password: str):
+    if database.db is None:
+        raise Exception("Database is not connected")
+
+    collection = database.db["users"]
+
+    try:
+        object_id = ObjectId(user_id)
+    except:
+        raise HTTPException(status_code=400, detail="Invalid user ID format")
+
+    user = await collection.find_one({"_id": object_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    hashed_pw = hash_password(new_password)
+
+    await collection.update_one(
+        {"_id": object_id},
+        {"$set": {"password": hashed_pw}}
+    )
+
+    return {
+        "status": "success",
+        "message": "Password successfully reset",
         "id": user_id
     }
