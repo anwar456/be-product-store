@@ -2,26 +2,32 @@
 
 Backend service untuk sistem Product Store — dibangun menggunakan **Python** dan **FastAPI**.
 
----
-
 ## 🚀 Cara Menjalankan Backend
 
 ### 1. Clone Repository
-```bash
-git clone https://github.com/anwar456/be-product-store.git
-cd be-product-store
 
-### 2. Aktifkan Virtual Environment
-```bash
-python -m venv .venv
-source .venv/bin/activate  # (Linux/macOS)
-.venv\Scripts\activate     # (Windows)
+`git clone https://github.com/anwar456/be-product-store.git `
 
-### 3. Install Dependencies
-pip install -r requirements.txt
+### 2. Masuk Ke folder
+`cd be-product-store`
 
-### 4. Buat File .env
-Untuk file .env nya nanti saya sertakan di google drive
+### 3. Aktifkan Virtual Environment
+`python -m venv .venv`
+`source .venv/bin/activate  # (Linux/macOS)`
+`.venv\Scripts\activate     # (Windows)`
 
-### 5. Jalankan Server
-uvicorn app.main:app --reload
+### 4. Install Dependencies
+`pip install -r requirements.txt`
+
+### 5. Buat File .env
+`Untuk file .env nya nanti saya sertakan di google drive`
+
+### 6. Jalankan Server
+`uvicorn app.main:app --reload`
+
+Server akan berjalan di:
+- http://127.0.0.1:8000 atau,
+- http://localhost:8000
+Dan untuk melihat dokumentasi bisa di:
+- http://127.0.0.1:8000/docs atau,
+- http://localhost:8000/docs
