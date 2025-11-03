@@ -1,6 +1,10 @@
 # 🛍️ be-product-store
 
-Backend service untuk sistem Product Store — dibangun menggunakan **Python** dan **FastAPI**.
+Backend service untuk sistem Product Store — dibangun menggunakan:
+
+- ⚡ Python 
+- 📝 FastAPI 
+- 🔗 Cloudinary (Untuk upload image)
 
 ## 🚀 Cara Menjalankan Backend
 
@@ -33,3 +37,4 @@ Dan untuk melihat dokumentasi bisa di:
 - http://localhost:8000/docs
 
 <img width="1645" height="1508" alt="Screenshot 2025-11-02 210027" src="https://github.com/user-attachments/assets/18e2325c-09a5-4600-9399-e2bc27eea891" />
+
