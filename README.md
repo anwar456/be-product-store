@@ -3,7 +3,8 @@
 Backend service untuk sistem Product Store — dibangun menggunakan:
 
 - ⚡ Python 
-- 📝 FastAPI 
+- 📝 FastAPI
+- ⚙️ Mongo DB
 - 🔗 Cloudinary (Untuk upload image)
 
 ## 🚀 Cara Menjalankan Backend
